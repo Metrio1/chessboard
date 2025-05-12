@@ -1,0 +1,15 @@
+.statistic {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) 1.5fr;
+  gap: 1.5rem;
+  background-color: var(--colorGray);
+  padding: 1.5rem;
+  border-radius: 1rem;
+
+  &Card {
+    background-color: var(--colorWhite);
+    border-radius: 1rem;
+    padding: 1rem;
+    min-height: 20rem;
+  }
+}
