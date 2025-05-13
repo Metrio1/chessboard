@@ -19,43 +19,54 @@ export const ChessboardGrid: React.FC<GridProps> = ({ days, rooms }) => {
     );
 
     return (
-        <div className="chessboardGridWrapper">
-            <div className="chessboardGrid">
+        <div className="chessboardGrid">
+            <div className="chessboardGrid__left">
                 <div className="chessboardGrid__cell chessboardGrid__cell--corner" />
-
-                {monthGroups.map((m, i) => (
-                    <div
-                        key={i}
-                        className="chessboardGrid__cell chessboardGrid__cell--month"
-                        data-span={m.span}
-                    >
-                        {m.name}
+                {rooms.map(room => (
+                    <div key={room.id} className="chessboardGrid__cell chessboardGrid__cell--row-header">
+                        {room.name}
                     </div>
                 ))}
+            </div>
 
-                {days.map((d, i) => (
-                    <div
-                        key={i}
-                        className="chessboardGrid__cell chessboardGrid__cell--header"
-                    >
-                        <div className="chessboardGrid__day-number">{d.day}</div>
-                        <div className="chessboardGrid__weekday">{d.weekDay}</div>
-                    </div>
-                ))}
-
-                {rooms.map((room) => (
-                    <React.Fragment key={room.id}>
-                        <div className="chessboardGrid__cell chessboardGrid__cell--row-header">
-                            {room.name}
-                        </div>
-                        {days.map((_, idx) => (
+            <div className="chessboardGrid__right">
+                <div className="chessboardGrid__header">
+                    <div className="chessboardGrid__months">
+                        {monthGroups.map((m, i) => (
                             <div
-                                key={`${room.id}-${idx}`}
-                                className="chessboardGrid__cell"
-                            />
+                                key={i}
+                                className="chessboardGrid__cell chessboardGrid__cell--month"
+                                style={{ gridColumn: `span ${m.span}` }}
+                            >
+                                {m.name}
+                            </div>
                         ))}
-                    </React.Fragment>
-                ))}
+                    </div>
+                    <div className="chessboardGrid__days">
+                        {days.map((d, i) => (
+                            <div
+                                key={i}
+                                className="chessboardGrid__cell chessboardGrid__cell--header"
+                            >
+                                <div className="chessboardGrid__day-number">{d.day}</div>
+                                <div className="chessboardGrid__weekday">{d.weekDay}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="chessboardGrid__body">
+                    {rooms.map((room) => (
+                        <div key={room.id} className="chessboardGrid__row">
+                            {days.map((_, idx) => (
+                                <div
+                                    key={`${room.id}-${idx}`}
+                                    className="chessboardGrid__cell"
+                                />
+                            ))}
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
 
