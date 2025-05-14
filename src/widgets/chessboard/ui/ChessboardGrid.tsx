@@ -1,29 +1,67 @@
 import * as React from "react";
 import "../index.scss";
 import type { DayInfo } from "../../../entities/day.ts";
+import {useState} from "react";
 
 interface GridProps {
-    days: DayInfo[];
     rooms: { id: string; name: string }[];
 }
 
-export const ChessboardGrid: React.FC<GridProps> = ({ days, rooms }) => {
-    const monthGroups = days.reduce<Array<{ name: string; span: number }>>(
-        (acc, cur) => {
-            const last = acc[acc.length - 1];
-            if (last && last.name === cur.monthName) last.span++;
-            else acc.push({ name: cur.monthName, span: 1 });
-            return acc;
-        },
-        []
-    );
+export const ChessboardGrid: React.FC<GridProps> = ({ rooms }) => {
+
+    const [selectedRanges, setSelectedRanges] = useState<Record<string, { start: number; end: number }[]>>({});
+    const [dragState, setDragState] = useState<{ roomId: string; startIdx: number } | null>(null);
+
+    // Состояние: дата первого дня текущего отображаемого месяца
+    const [visibleDate, setVisibleDate] = React.useState(() => {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), 1);
+    });
+
+    // Генерирует список дней для переданного месяца
+    const getDaysForMonth = (date: Date): DayInfo[] => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const days: DayInfo[] = [];
+
+        const d = new Date(year, month, 1);
+
+        // Пока дата принадлежит указанному месяцу, добавляем в массив
+        while (d.getMonth() === month) {
+            days.push({
+                date: new Date(d),
+                day: d.getDate(),
+                year: d.getFullYear(),
+                monthName: d.toLocaleString("ru", { month: "long" }),
+                weekDay: d.toLocaleString("ru", { weekday: "short" }),
+            });
+            d.setDate(d.getDate() + 1); // переходим к следующему дню
+        }
+
+        return days;
+    };
+
+    const visibleDays = getDaysForMonth(visibleDate);
+    const visibleMonthName = visibleDate.toLocaleString("ru", { month: "long" });
+    const visibleYear = visibleDate.getFullYear();
+
+    const goToPrevMonth = () => {
+        setVisibleDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+    };
+
+    const goToNextMonth = () => {
+        setVisibleDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+    };
 
     return (
         <div className="chessboardGrid">
             <div className="chessboardGrid__left">
                 <div className="chessboardGrid__cell chessboardGrid__cell--corner" />
                 {rooms.map(room => (
-                    <div key={room.id} className="chessboardGrid__cell chessboardGrid__cell--row-header">
+                    <div
+                        key={room.id}
+                        className="chessboardGrid__cell chessboardGrid__cell--row-header"
+                    >
                         {room.name}
                     </div>
                 ))}
@@ -32,18 +70,19 @@ export const ChessboardGrid: React.FC<GridProps> = ({ days, rooms }) => {
             <div className="chessboardGrid__right">
                 <div className="chessboardGrid__header">
                     <div className="chessboardGrid__months">
-                        {monthGroups.map((m, i) => (
-                            <div
-                                key={i}
-                                className="chessboardGrid__cell chessboardGrid__cell--month"
-                                style={{ gridColumn: `span ${m.span}` }}
-                            >
-                                {m.name}
-                            </div>
-                        ))}
+                        <div className="chessboardGrid__month-navigation">
+                            <button onClick={goToPrevMonth}>←</button>
+                        </div>
+                        <div className="chessboardGrid__month-name">
+                            {visibleMonthName} {visibleYear}
+                        </div>
+                        <div className="chessboardGrid__month-navigation chessboardGrid__month-navigation-right">
+                            <button onClick={goToNextMonth}>→</button>
+                        </div>
                     </div>
+
                     <div className="chessboardGrid__days">
-                        {days.map((d, i) => (
+                        {visibleDays.map((d, i) => (
                             <div
                                 key={i}
                                 className="chessboardGrid__cell chessboardGrid__cell--header"
@@ -56,9 +95,9 @@ export const ChessboardGrid: React.FC<GridProps> = ({ days, rooms }) => {
                 </div>
 
                 <div className="chessboardGrid__body">
-                    {rooms.map((room) => (
+                    {rooms.map(room => (
                         <div key={room.id} className="chessboardGrid__row">
-                            {days.map((_, idx) => (
+                            {visibleDays.map((_, idx) => (
                                 <div
                                     key={`${room.id}-${idx}`}
                                     className="chessboardGrid__cell"
@@ -69,6 +108,5 @@ export const ChessboardGrid: React.FC<GridProps> = ({ days, rooms }) => {
                 </div>
             </div>
         </div>
-
     );
 };

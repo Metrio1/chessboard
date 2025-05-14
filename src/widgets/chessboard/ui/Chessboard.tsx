@@ -1,25 +1,40 @@
 import { ChessboardGrid } from "./ChessboardGrid";
 import "../index.scss";
-import type {DayInfo} from "../../../entities/day";
+import {useEffect, useState} from "react";
+
+interface RoomType {
+    id: string;
+    name: string;
+}
 
 export const Chessboard = () => {
-    const start = new Date(2025, 0, 1);
-    const end = new Date(2025, 11, 31);
-    const days: DayInfo[] = [];
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-        days.push({
-            date: new Date(d),
-            day: d.getDate(),
-            monthName: d.toLocaleString("ru", { month: "long" }),
-            weekDay: d.toLocaleString("ru", { weekday: "short" }),
-        });
-    }
+    const [rooms, setRooms] = useState<RoomType[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const rooms = [
-        { id: "r1", name: "Двухместный" },
-        { id: "r2", name: "Трёхместный" },
-        { id: "r3", name: "Четырёхместный" },
-    ];
+    useEffect(() => {
+        const fetchRooms = async () => {
+            try {
+                const response = await fetch('http://localhost/wp-json/booking/v1/room-types');
+                if (!response.ok) throw new Error('Ошибка загрузки типов номеров');
+                const data = await response.json();
+                setRooms(data);
+            } catch (err) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError('Произошла неизвестная ошибка');
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    return <ChessboardGrid days={days} rooms={rooms} />;
+        fetchRooms();
+    }, []);
+
+    if (loading) return <div>Загрузка...</div>;
+    if (error) return <div>Ошибка: {error}</div>;
+
+    return <ChessboardGrid rooms={rooms} />;
 };

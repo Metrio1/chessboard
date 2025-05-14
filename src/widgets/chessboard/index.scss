@@ -1,80 +1,115 @@
+.chessboardGrid__cell.is-selected {
+  background-color: rgba(0, 128, 255, 0.3);
+}
+
 .chessboardGrid {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  width: 100%;
 
   &__left {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 9.7rem repeat(auto-fit, 3rem);
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: white;
 
     .chessboardGrid__cell {
       width: 20rem;
       height: 3rem;
-    }
 
-    .chessboardGrid__cell--corner {
-      height: 6rem;
-      background: transparent;
+      &--corner {
+        height: 100%;
+        border: 1px solid var(--colorSilver);
+        background: transparent;
+      }
     }
   }
 
   &__right {
+    max-width: 200rem;
+    grid-column: 2;
     overflow-x: auto;
-    width: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
 
     .chessboardGrid__header {
-      display: flex;
-      flex-direction: column;
       position: sticky;
       top: 0;
       z-index: 2;
       background: var(--colorWhite);
+      display: grid;
+      grid-template-rows: auto auto;
     }
 
-    .chessboardGrid__months,
+    .chessboardGrid__months {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      background: var(--colorSilver);
+      font-weight: bold;
+      text-transform: capitalize;
+      padding-block: 0.5rem;
+      position: sticky;
+      left: 0;
+      width: 100%;
+    }
+
+    .chessboardGrid__month-navigation {
+      padding-inline: 1rem;
+    }
+
+    .chessboardGrid__month-navigation-right {
+      position: sticky;
+      right: 0;
+      background: var(--colorSilver);
+    }
+
+    .chessboardGrid__month-name {
+      text-align: start;
+    }
+
     .chessboardGrid__days {
       display: grid;
-      grid-template-columns: repeat(365, 5rem);
+      grid-auto-columns: minmax(4rem, 1fr);
+      grid-auto-flow: column;
+      width: 100%;
     }
 
     .chessboardGrid__body {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-auto-rows: 3rem;
 
       .chessboardGrid__row {
         display: grid;
-        grid-template-columns: repeat(365, 5rem);
+        grid-auto-columns: minmax(4rem, 1fr);
+        grid-auto-flow: column;
       }
     }
 
     .chessboardGrid__cell {
-      width: 5rem;
-      height: 3rem;
+      min-width: 4rem;
+      height: 100%;
       border: 1px solid var(--colorSilver);
       display: flex;
       align-items: center;
       justify-content: center;
       box-sizing: border-box;
-    }
 
-    .chessboardGrid__cell--month {
-      justify-content: start;
-      padding-left: 3rem;
-      background: var(--colorSilver);
-      font-weight: bold;
-      text-transform: capitalize;
-    }
+      &--header {
+        height: 5rem;
+        flex-direction: column;
+        background: var(--colorWhiteSmoke);
+        font-weight: bold;
 
-    .chessboardGrid__cell--header {
-      flex-direction: column;
-      background: var(--colorWhiteSmoke);
-      font-weight: bold;
-
-      .chessboardGrid__day-number {
-        font-size: 1.5rem;
-      }
-      .chessboardGrid__weekday {
-        font-size: 1.5rem;
-        color: var(--colorGray);
+        .chessboardGrid__day-number {
+          font-size: 1.5rem;
+        }
+        .chessboardGrid__weekday {
+          font-size: 1.5rem;
+          color: var(--colorGray);
+        }
       }
     }
   }
@@ -84,5 +119,6 @@
     justify-content: flex-start;
     padding-left: 1rem;
     font-weight: bold;
+    border: 1px solid var(--colorSilver);
   }
 }
