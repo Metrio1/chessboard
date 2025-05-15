@@ -28,11 +28,16 @@ export const ChessboardGrid = ({ rooms }: GridProps) => {
 
         setSelectedRanges(prev => {
             const ranges = [...(prev[roomId] || [])];
-            ranges[ranges.length - 1] = newRange; // заменяем последний диапазон
+            ranges[ranges.length - 1] = newRange;
 
             return { ...prev, [roomId]: ranges };
         });
     };
+
+    const handleMouseUp = () => {
+        setDragState(null);
+    };
+
 
     // Состояние: дата первого дня текущего отображаемого месяца
     const [visibleDate, setVisibleDate] = useState(() => {
