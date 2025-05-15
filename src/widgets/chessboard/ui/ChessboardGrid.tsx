@@ -80,6 +80,8 @@ export const ChessboardGrid = ({ rooms }: GridProps) => {
         setVisibleDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
     };
 
+    console.log(visibleDays);
+
     return (
         <div className="chessboardGrid">
             <div className="chessboardGrid__left">
@@ -109,13 +111,13 @@ export const ChessboardGrid = ({ rooms }: GridProps) => {
                     </div>
 
                     <div className="chessboardGrid__days">
-                        {visibleDays.map((d, i) => (
+                        {visibleDays.map((dayInfo, i) => (
                             <div
                                 key={i}
                                 className="chessboardGrid__cell chessboardGrid__cell--header"
                             >
-                                <div className="chessboardGrid__day-number">{d.day}</div>
-                                <div className="chessboardGrid__weekday">{d.weekDay}</div>
+                                <div className="chessboardGrid__day-number">{dayInfo.day}</div>
+                                <div className="chessboardGrid__weekday">{dayInfo.weekDay}</div>
                             </div>
                         ))}
                     </div>
@@ -124,10 +126,13 @@ export const ChessboardGrid = ({ rooms }: GridProps) => {
                 <div className="chessboardGrid__body">
                     {rooms.map(room => (
                         <div key={room.id} className="chessboardGrid__row">
-                            {visibleDays.map((_, idx) => (
+                            {visibleDays.map((dayInfo, idx) => (
                                 <div
                                     key={`${room.id}-${idx}`}
                                     className="chessboardGrid__cell"
+                                    // className={(dayInfo.date.getTime() >= new Date("2025-05-17").setHours(0,0,0,0) && dayInfo.date.getTime() <= new Date("2025-05-19").setHours(0,0,0,0)) ? "chessboardGrid__cell chessboardGrid__cell--booked" : "chessboardGrid__cell"}
+                                    // data-js={`${dayInfo.date.getFullYear()}-${dayInfo.date.getMonth() + 1}-${dayInfo.date.getDate()}`}
+                                    data-js={`${room.id}`}
                                 />
                             ))}
                         </div>
