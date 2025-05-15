@@ -1,4 +1,3 @@
-import * as React from "react";
 import "../index.scss";
 import type { DayInfo } from "../../../entities/day.ts";
 import {useState} from "react";
@@ -7,13 +6,22 @@ interface GridProps {
     rooms: { id: string; name: string }[];
 }
 
-export const ChessboardGrid: React.FC<GridProps> = ({ rooms }) => {
+export const ChessboardGrid = ({ rooms }: GridProps) => {
 
     const [selectedRanges, setSelectedRanges] = useState<Record<string, { start: number; end: number }[]>>({});
     const [dragState, setDragState] = useState<{ roomId: string; startIdx: number } | null>(null);
 
+    const handleMouseDown = (roomId: string, dayIdx: number) => {
+        setDragState({ roomId, startIdx: dayIdx });
+
+        setSelectedRanges(prev => ({
+            ...prev,
+            [roomId]: [...(prev[roomId] || []), { start: dayIdx, end: dayIdx }],
+        }))
+    }
+
     // Состояние: дата первого дня текущего отображаемого месяца
-    const [visibleDate, setVisibleDate] = React.useState(() => {
+    const [visibleDate, setVisibleDate] = useState(() => {
         const now = new Date();
         return new Date(now.getFullYear(), now.getMonth(), 1);
     });
