@@ -20,6 +20,20 @@ export const ChessboardGrid = ({ rooms }: GridProps) => {
         }))
     }
 
+    const handleMouseEnter = (roomId: string, dayIdx: number) => {
+        if (!dragState || dragState.roomId !== roomId) return;
+
+        const start = dragState.startIdx;
+        const newRange = { start: Math.min(start, dayIdx), end: Math.max(start, dayIdx) };
+
+        setSelectedRanges(prev => {
+            const ranges = [...(prev[roomId] || [])];
+            ranges[ranges.length - 1] = newRange; // заменяем последний диапазон
+
+            return { ...prev, [roomId]: ranges };
+        });
+    };
+
     // Состояние: дата первого дня текущего отображаемого месяца
     const [visibleDate, setVisibleDate] = useState(() => {
         const now = new Date();
