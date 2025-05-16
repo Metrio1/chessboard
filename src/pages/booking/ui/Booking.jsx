@@ -1,6 +1,5 @@
-
 import "../index.scss";
-import {Chessboard} from "../../../widgets/chessboard/ui/Chessboard.tsx";
+import {Chessboard} from "../../../widgets/chessboard/ui/Chessboard.jsx";
 
 export const Booking = () => {
 

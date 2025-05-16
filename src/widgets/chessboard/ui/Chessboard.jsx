@@ -1,16 +1,11 @@
-import { ChessboardGrid } from "./ChessboardGrid";
+import { ChessboardGrid } from "./ChessboardGrid.jsx";
 import "../index.scss";
 import {useEffect, useState} from "react";
 
-interface RoomType {
-    id: string;
-    name: string;
-}
-
 export const Chessboard = () => {
-    const [rooms, setRooms] = useState<RoomType[]>([]);
+    const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchRooms = async () => {

@@ -1,41 +1,22 @@
 import "../index.scss";
-import type { DayInfo } from "../../../entities/day.ts";
 import {useState} from "react";
+import { format, compareAsc } from "date-fns";
 
-interface GridProps {
-    rooms: { id: string; name: string }[];
-}
 
-export const ChessboardGrid = ({ rooms }: GridProps) => {
+export const ChessboardGrid = ({rooms}) => {
 
-    const [selectedRanges, setSelectedRanges] = useState<Record<string, { start: number; end: number }[]>>({});
-    const [dragState, setDragState] = useState<{ roomId: string; startIdx: number } | null>(null);
+    const [reservation, setReservation] = useState(false)
 
-    const handleMouseDown = (roomId: string, dayIdx: number) => {
-        setDragState({ roomId, startIdx: dayIdx });
-
-        setSelectedRanges(prev => ({
-            ...prev,
-            [roomId]: [...(prev[roomId] || []), { start: dayIdx, end: dayIdx }],
-        }))
+    const handleMouseDown = (roomId, formattedDate) => {
+        console.log(roomId, formattedDate);
     }
 
-    const handleMouseEnter = (roomId: string, dayIdx: number) => {
-        if (!dragState || dragState.roomId !== roomId) return;
-
-        const start = dragState.startIdx;
-        const newRange = { start: Math.min(start, dayIdx), end: Math.max(start, dayIdx) };
-
-        setSelectedRanges(prev => {
-            const ranges = [...(prev[roomId] || [])];
-            ranges[ranges.length - 1] = newRange;
-
-            return { ...prev, [roomId]: ranges };
-        });
+    const handleMouseEnter = (roomId, formattedDate) => {
+        console.log(roomId, formattedDate);
     };
 
     const handleMouseUp = () => {
-        setDragState(null);
+
     };
 
 
@@ -46,10 +27,10 @@ export const ChessboardGrid = ({ rooms }: GridProps) => {
     });
 
     // Генерирует список дней для переданного месяца
-    const getDaysForMonth = (date: Date): DayInfo[] => {
+    const getDaysForMonth = (date)=> {
         const year = date.getFullYear();
         const month = date.getMonth();
-        const days: DayInfo[] = [];
+        const days = [];
 
         const d = new Date(year, month, 1);
 
@@ -130,9 +111,10 @@ export const ChessboardGrid = ({ rooms }: GridProps) => {
                                 <div
                                     key={`${room.id}-${idx}`}
                                     className="chessboardGrid__cell"
-                                    // className={(dayInfo.date.getTime() >= new Date("2025-05-17").setHours(0,0,0,0) && dayInfo.date.getTime() <= new Date("2025-05-19").setHours(0,0,0,0)) ? "chessboardGrid__cell chessboardGrid__cell--booked" : "chessboardGrid__cell"}
-                                    // data-js={`${dayInfo.date.getFullYear()}-${dayInfo.date.getMonth() + 1}-${dayInfo.date.getDate()}`}
-                                    data-js={`${room.id}`}
+                                    data-js={room.id}
+                                    // onMouseDown={() => handleMouseDown(room.id, `${dayInfo.date.getFullYear()}-${dayInfo.date.getMonth() + 1}-${dayInfo.date.getDate()}`)}
+                                    onMouseDown={() => handleMouseDown(`${room.id}`, format(new Date(dayInfo.date), "dd-MM-yyyy"))}
+                                    onMouseEnter={() => handleMouseEnter(`${room.id}`, format(new Date(dayInfo.date), "dd-MM-yyyy"))}
                                 />
                             ))}
                         </div>
