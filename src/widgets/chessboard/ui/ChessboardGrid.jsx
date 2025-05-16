@@ -5,20 +5,27 @@ import { format, compareAsc } from "date-fns";
 
 export const ChessboardGrid = ({rooms}) => {
 
-    const [reservation, setReservation] = useState(false)
+    const [selectedRanges, setSelectedRanges] = useState({});
+    const [dragState, setDragState] = useState(null);
 
     const handleMouseDown = (roomId, formattedDate) => {
-        console.log(roomId, formattedDate);
-    }
+        setSelectedRanges(prev => ({
+            ...prev,
+            [roomId]: prev[roomId]?.includes(formattedDate)
+                ? prev[roomId].filter(date => date !== formattedDate)
+                : [...(prev[roomId] || []), formattedDate],
+        }));
+    };
+
+    console.log(selectedRanges)
 
     const handleMouseEnter = (roomId, formattedDate) => {
-        console.log(roomId, formattedDate);
-    };
+
+    }
 
     const handleMouseUp = () => {
 
     };
-
 
     // Состояние: дата первого дня текущего отображаемого месяца
     const [visibleDate, setVisibleDate] = useState(() => {
@@ -60,8 +67,6 @@ export const ChessboardGrid = ({rooms}) => {
     const goToNextMonth = () => {
         setVisibleDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
     };
-
-    console.log(visibleDays);
 
     return (
         <div className="chessboardGrid">
@@ -110,7 +115,9 @@ export const ChessboardGrid = ({rooms}) => {
                             {visibleDays.map((dayInfo, idx) => (
                                 <div
                                     key={`${room.id}-${idx}`}
-                                    className="chessboardGrid__cell"
+                                    className={
+                                        `chessboardGrid__cell${selectedRanges[room.id]?.includes(format(new Date(dayInfo.date), "dd-MM-yyyy")) ? " chessboardGrid__cell--booked" : ""}`
+                                    }
                                     data-js={room.id}
                                     // onMouseDown={() => handleMouseDown(room.id, `${dayInfo.date.getFullYear()}-${dayInfo.date.getMonth() + 1}-${dayInfo.date.getDate()}`)}
                                     onMouseDown={() => handleMouseDown(`${room.id}`, format(new Date(dayInfo.date), "dd-MM-yyyy"))}
